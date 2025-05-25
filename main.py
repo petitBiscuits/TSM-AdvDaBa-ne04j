@@ -167,7 +167,6 @@ def download_data(url, csv_file):
 
 
 def setup_indexes():
-    """Create indexes and constraints for optimal performance"""
     with driver.session() as session:
         print("Setting up indexes and constraints...")
 
@@ -176,7 +175,6 @@ def setup_indexes():
             "CREATE CONSTRAINT article_id IF NOT EXISTS FOR (a:ARTICLE) REQUIRE a.id IS UNIQUE",
             "CREATE CONSTRAINT author_id IF NOT EXISTS FOR (a:AUTHOR) REQUIRE a.id IS UNIQUE",
 
-            # Additional indexes for performance
             "CREATE INDEX article_title IF NOT EXISTS FOR (a:ARTICLE) ON (a.title)",
             "CREATE INDEX author_name IF NOT EXISTS FOR (a:AUTHOR) ON (a.name)"
         ]
