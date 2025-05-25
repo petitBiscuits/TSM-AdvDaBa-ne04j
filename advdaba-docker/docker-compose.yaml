@@ -22,10 +22,9 @@ services:
       # Performance optimizations
       - NEO4J_dbms_checkpoint_interval_time=30m
       - NEO4J_dbms_checkpoint_iops_limit=1000
-      - NEO4J_dbms_transaction_timeout=30m
+      - NEO4J_dbms_transaction_timeout=60m
       - NEO4J_dbms_lock_acquisition_timeout=30s
       - NEO4J_metrics_enabled=false
-      - NEO4J_dbms_jvm_additional=-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication
       - NEO4J_dbms_memory_heap_max__size=1g
     volumes:
 #      - ./neo4j/data:/data
@@ -76,7 +75,7 @@ services:
           memory: 512m
     networks:
       - dblp-network
-    command: python main2.py
+    command: python main.py
 
 volumes:
   neo4j-import:

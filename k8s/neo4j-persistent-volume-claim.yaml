@@ -1,12 +1,11 @@
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: neo4j-data-pvc
   namespace: tsm-daba
 spec:
+  storageClassName: standard        # <-- make sure this exists in your cluster
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 50Gi
-#  storageClassName: standard

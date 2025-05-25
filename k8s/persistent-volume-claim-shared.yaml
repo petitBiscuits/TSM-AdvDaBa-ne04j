@@ -4,9 +4,9 @@ metadata:
   name: neo4j-import-pvc
   namespace: tsm-daba
 spec:
+  storageClassName: standard
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi
-#  storageClassName: shared

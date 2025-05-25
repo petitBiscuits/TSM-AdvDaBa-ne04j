@@ -26,7 +26,7 @@ spec:
           echo "Neo4j is ready!"
       containers:
       - name: dblp-loader
-        image: dblp-loader:latest  # You'll need to build and push this image
+        image: petitbiscuits/dblp-loader:latest  # CHANGE THIS to your image
         env:
         - name: SECRET_KEY
           valueFrom:

@@ -273,7 +273,7 @@ def process_citations(cites_csv_path):
               WHERE citing IS NOT NULL AND cited IS NOT NULL
               MERGE (citing)-[:CITES]->(cited)
               ",
-              {batchSize: 50000, parallel: true, params: {csvPath: $csvPath}}
+              {batchSize: 50000, parallel: false, params: {csvPath: $csvPath}}
             )
             """,
             csvPath=cites_csv_path
@@ -290,13 +290,13 @@ if __name__ == "__main__":
 
     articles_csv, authors_csv, authored_csv, cites_csv = download_data(url=FILE_URL, csv_file="/import")
 
-    # setup_indexes()
+    setup_indexes()
 
     # Process each CSV file separately with proper file:/// URLs
-    # process_articles("file:///articles.csv")
-    # process_authors("file:///authors.csv")
-    # process_authored_relationships("file:///authored.csv")
-    # process_citations("file:///cites.csv")
+    process_articles("file:///articles.csv")
+    process_authors("file:///authors.csv")
+    process_authored_relationships("file:///authored.csv")
+    process_citations("file:///cites.csv")
 
     driver.close()
 
