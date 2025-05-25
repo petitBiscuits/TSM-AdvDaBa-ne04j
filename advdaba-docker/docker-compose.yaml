@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  neo4j:
+    image: neo4j:latest
+    container_name: advdaba_labo2_neo4j
+    ports:
+      - "7474:7474"  # Neo4j Browser
+      - "7687:7687"  # Bolt protocol
+    environment:
+      - NEO4J_AUTH=neo4j/testtest
+      - NEO4J_dbms_memory_pagecache_size=1g
+      - NEO4J_dbms_memory_heap_initial__size=1g
+      - NEO4J_dbms_memory_heap_max__size=1g
+    volumes:
+      - ./neo4j/data:/data
+      - ./neo4j/logs:/logs
+      - ./neo4j/import:/var/lib/neo4j/import
+      - ./neo4j/plugins:/plugins
+    deploy:
+      resources:
+        limits:
+          memory: 3g
+        reservations:
+          memory: 2g
+    healthcheck:
+      test: ["CMD", "neo4j", "status"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - dblp-network
+
+  dblp-loader:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: advdaba_labo2_loader
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=bolt://neo4j:7687
+      - USER=neo4j
+      - SECRET_KEY=testtest
+      - MAX_ITEMS_PROCESSED=${MAX_ITEMS_PROCESSED:-0}
+      - DEBUG=${DEBUG:-False}
+    volumes:
+      - ./logs:/app/logs
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservations:
+          memory: 512m
+    networks:
+      - dblp-network
+    command: python ultra_fast_loader.py
+
+networks:
+  dblp-network:
+    driver: bridge

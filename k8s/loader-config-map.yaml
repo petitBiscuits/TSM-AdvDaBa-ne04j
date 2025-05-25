@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dblp-config
+  namespace: dblp-system
+data:
+  DATABASE_URL: "bolt://neo4j-service:7687"
+  USER: "neo4j"
+  MAX_ITEMS_PROCESSED: "0"
+  DEBUG: "False"
+  FILE_URL: "http://vmrum.isc.heia-fr.ch/dblpv13.json"
+  BATCH_SIZE: "200000"
+  CITATION_STRATEGY: "optimized"
