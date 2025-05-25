@@ -1,17 +1,52 @@
-apiVersion: v1
-kind: Pod
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: $title$
-  labels:
-    role: $title$
+  name: dblp-loader-job
+  namespace: tsm-daba
 spec:
-  containers:
-    - name: $title$
-      image: $nginx$
-      imagePullPolicy: IfNotPresent
-      ports:
-        - name: $title$
-          containerPort: $80$
-          protocol: $TCP$
-  restartPolicy: Always
-  $END$
+  backoffLimit: 3
+  activeDeadlineSeconds: 14400  # 4 hours timeout
+  template:
+    metadata:
+      labels:
+        app: dblp-loader
+    spec:
+      restartPolicy: Never
+      initContainers:
+      - name: wait-for-neo4j
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+        - |
+          echo "Waiting for Neo4j to be ready..."
+          until nc -z neo4j-service 7687; do
+            echo "Neo4j not ready, waiting..."
+            sleep 10
+          done
+          echo "Neo4j is ready!"
+      containers:
+      - name: dblp-loader
+        image: dblp-loader:latest  # You'll need to build and push this image
+        env:
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: dblp-secrets
+              key: SECRET_KEY
+        envFrom:
+        - configMapRef:
+            name: dblp-config
+        volumeMounts:
+        - name: neo4j-import
+          mountPath: /import
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+      volumes:
+      - name: neo4j-import
+        persistentVolumeClaim:
+          claimName: neo4j-import-pvc

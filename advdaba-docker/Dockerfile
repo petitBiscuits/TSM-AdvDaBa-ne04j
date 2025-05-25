@@ -12,11 +12,11 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application files
-COPY ultra_fast_loader.py .
-COPY test3.py .
+#COPY ultra_fast_loader.py .
+COPY main2.py .
 
 # Create logs directory
 RUN mkdir -p /app/logs
 
 # Default command
-CMD ["python", "ultra_fast_loader.py"]
+CMD ["python", "main2.py"]

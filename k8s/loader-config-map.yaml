@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: dblp-config
-  namespace: dblp-system
+  namespace: tsm-daba
 data:
   DATABASE_URL: "bolt://neo4j-service:7687"
   USER: "neo4j"
