@@ -36,27 +36,20 @@ def fix_numberint(text):
 
 
 def clean_csv_field(text):
-    """Clean text field for safe CSV writing - very aggressive cleaning"""
     if not text:
         return ''
 
-    # Convert to string and strip whitespace
     text = str(text).strip()
 
-    # Replace line breaks and carriage returns with spaces
     text = text.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ')
 
-    # Remove control characters
     text = ''.join(char for char in text if ord(char) >= 32)
 
-    # Handle quotes very aggressively - double escape them for CSV
-    text = text.replace('"', '""')  # CSV standard: double quotes become double-double quotes
+    text = text.replace('"', '""')
 
-    # Remove any remaining problematic characters
-    text = text.replace('\x00', '')  # Remove null bytes
-    text = text.replace('\\', '/')  # Replace backslashes with forward slashes
+    text = text.replace('\x00', '')
+    text = text.replace('\\', '/')
 
-    # Limit length to prevent extremely long fields
     if len(text) > 2000:
         text = text[:1997] + "..."
 
@@ -273,7 +266,7 @@ def process_citations(cites_csv_path):
               WHERE citing IS NOT NULL AND cited IS NOT NULL
               MERGE (citing)-[:CITES]->(cited)
               ",
-              {batchSize: 50000, parallel: false, params: {csvPath: $csvPath}}
+              {batchSize: 10000, parallel: false, params: {csvPath: $csvPath}}
             )
             """,
             csvPath=cites_csv_path
